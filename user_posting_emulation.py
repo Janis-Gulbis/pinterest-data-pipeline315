@@ -37,6 +37,29 @@ class AWSDBConnector:
         )
         return engine
 
+def format_data_for_topic(topic, data):
+    
+    if topic == "geo":
+        
+        expected_columns = ["ind", "timestamp", "latitude", "longitude", "country"]
+    elif topic == "pin":
+       
+        expected_columns = ["index", "unique_id", "title", "description", "poster_name", "follower_count", "tag_list", "is_image_or_video", "img_src", "downloaded", "save_location", "category"]
+    elif topic == "user":
+        
+        expected_columns = ["ind", "first_name", "last_name", "age", "date_joined"]
+    else:
+        raise ValueError(f"Unknown topic: {topic}")
+
+    # Ensure data matches the expected columns
+    formatted_data = {}
+    for column in expected_columns:
+        if column in data:
+            formatted_data[column] = data[column]
+        else:
+            formatted_data[column] = None  # Assign None if column is missing
+
+    return formatted_data
 
 def send_to_kafka(topic, data):
     endpoint_url = f"{API_URL}/{KAFKA_TOPICS[topic]}"
@@ -44,13 +67,16 @@ def send_to_kafka(topic, data):
     # Convert datetime objects to strings in the data
     for key, value in data.items():
         if isinstance(value, datetime):
-            data[key] = value.strftime("%Y-%m-%d %H:%M:%S") 
+            data[key] = value.strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Format data according to the topic
+    formatted_data = format_data_for_topic(topic, data)
 
     # Wrap the data in the required Kafka payload format
     payload = {
         "records": [
             {
-                "value": json.dumps(data)
+                "value": formatted_data
             }
         ]
     }
@@ -65,8 +91,6 @@ def send_to_kafka(topic, data):
         print(f"Successfully sent to {topic}")
     else:
         print(f"Failed to send to {topic}: {response.status_code}, {response.text}")
-
-
 
 def test_api():
     """Test if API is responding."""
