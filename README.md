@@ -5,11 +5,14 @@
 
 <!-- SHIELDS FOR REPO -->
 <p align="left">
-    <a>
-        <img src="https://img.shields.io/badge/language-Python-red"
-            alt="Language"></a>
-   
+  <a>
+    <img src="https://img.shields.io/badge/language-Python-red" alt="Language">
+  </a>
+  <a>
+    <img src="https://img.shields.io/badge/language-SQL-blue" alt="Language">
+  </a>
 </p>
+
 
 <!-- ABOUT THE PROJECT -->
 ## About the Project
