@@ -20,7 +20,7 @@
 ### Summary
 Pinterest is a visual discovery platform that helps users find ideas and inspiration. With billions of data points generated daily through views, follows, and uploads, Pinterest continuously analyzes user interactions to deliver more relevant content.
 
-This project builds a scalable, end-to-end data pipeline leveraging AWS cloud services and Databricks to process and analyze both real-time and historical Pinterest-emulated data. The pipeline is designed to handle streaming data ingestion, transformation, and analysis, enabling deeper insights into user engagement patterns.
+This project builds a scalable, end-to-end data pipeline leveraging AWS cloud services and Databricks to process and analyze real-time and historical Pinterest-emulated data. The pipeline is designed to handle streaming data ingestion, transformation, and analysis, enabling deeper insights into user engagement patterns.
 
 
 - `Key platforms and technologies`: AWS (AIM, EC2, S3, API Gateway, Kinesis, MWAA), Kafka, Apache (Spark, Airflow).
@@ -29,11 +29,15 @@ This project builds a scalable, end-to-end data pipeline leveraging AWS cloud se
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-### Project Structure
- - Data Extraction: The `data_extraction.py` file contains methods for loading data from various sources into Pandas DataFrames.
-- Data Cleaning: In `data_cleaning.py`, I implement the DataCleaning class to clean and preprocess the tables imported via `data_extraction.py`.
-- Database Upload: The `database_utils.py` file includes the DatabaseConnector class, which creates a database engine using credentials from a .yml file.
-- Main Script: The `main.py` file integrates all functionality, enabling seamless data upload to the local PostgreSQL database.
+### Files & File Content
+- The `user_posting_emulation.py` script emulates the stream of POST requests by users on Pinterest. Data is formatted and sent via API Invoke URL to Kafka topics in batches of 500 records per execution.
+- The `user_posting_emulation_streaming.py` script emulates a continuous stream of POST requests by users on Pinterest. Sends requests to the API adding one record at a time to the stream and utilizes PartitionKey to identify what table record belongs to.
+- `9105411ea84a_dag.py` An Airflow DAG that triggers a Databricks Notebook daily.
+- Databricks folder: 
+  • The `delta_table_setup.ipynb` is a Databricks Notebook setting up Delta tables for the clean data.
+  • The `process_batch_data.ipynb` obtains data from the AWS S3 bucket, cleans it, and writes it to the Delta table.
+  • The `process_stream_data.ipynb` obtains the stream data from AWS Kinesis, cleans it, and writes it to the Delta table.
+  • The `query_batch_data.ipynb` contains SQL queries performed on cleaned batch data.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
