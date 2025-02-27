@@ -30,14 +30,13 @@ This project builds a scalable, end-to-end data pipeline leveraging AWS cloud se
 
 
 ### Files & File Content
-- The `user_posting_emulation.py` script emulates the stream of POST requests by users on Pinterest. Data is formatted and sent via API Invoke URL to Kafka topics in batches of 500 records per execution.
-- The `user_posting_emulation_streaming.py` script emulates a continuous stream of POST requests by users on Pinterest. Sends requests to the API adding one record at a time to the stream and utilizes PartitionKey to identify what table record belongs to.
+- `user_posting_emulation.py` The script emulates the stream of POST requests by users on Pinterest. Data is formatted and sent via API Invoke URL to Kafka topics in batches of 500 records per execution.
+- `user_posting_emulation_streaming.py` This script emulates a continuous stream of POST requests by users on Pinterest. Sends requests to the API adding one record at a time to the stream and utilizes PartitionKey to identify what table record belongs to.
 - `9105411ea84a_dag.py` An Airflow DAG that triggers a Databricks Notebook daily.
-- Databricks folder: 
-  • The `delta_table_setup.ipynb` is a Databricks Notebook setting up Delta tables for the clean data.
-  • The `process_batch_data.ipynb` obtains data from the AWS S3 bucket, cleans it, and writes it to the Delta table.
-  • The `process_stream_data.ipynb` obtains the stream data from AWS Kinesis, cleans it, and writes it to the Delta table.
-  • The `query_batch_data.ipynb` contains SQL queries performed on cleaned batch data.
+- `delta_table_setup.ipynb` Databricks Notebook that sets up Delta tables for the clean data.
+- `process_batch_data.ipynb` Obtains data from the AWS S3 bucket, cleans it and writes it to the Delta table. This is the Databricks notebook that is run by `9105411ea84a_dag.py` daily.
+- `process_stream_data.ipynb` Obtains the stream data from AWS Kinesis, cleans it, and writes it to the Delta table.
+- `query_batch_data.ipynb` Contains SQL queries performed on cleaned batch data.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
