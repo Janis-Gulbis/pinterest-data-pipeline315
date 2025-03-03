@@ -42,6 +42,9 @@ This project builds a scalable, end-to-end data pipeline leveraging AWS cloud se
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### High-level Architecture
+
+<img src="https://github.com/Janis-Gulbis/pinterest-data-pipeline315/blob/main/arch.png#" alt="diagram of the architecture" width="1000">
+
 - `RDS` Stores Pinterest data. Source of data for the emulation script. 
 - `Data emulation` Python script feeds API Gateway with data. 
 - `API Gateway` Provides an API for data transfer. Batch data to Kafka and stream data to Kinesis DS.
@@ -51,8 +54,6 @@ This project builds a scalable, end-to-end data pipeline leveraging AWS cloud se
 - `MWAA` MWAA environment schedules Airflow workflows for Databricks environments.
 - `Databricks` Platform for processing and transforming batch and stream data.
 - `Spark` is used to clean and analyze data within Databricks.
-
-<img src="https://github.com/Janis-Gulbis/pinterest-data-pipeline315/blob/main/arch.png#" alt="diagram of the architecture" width="1000">
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
