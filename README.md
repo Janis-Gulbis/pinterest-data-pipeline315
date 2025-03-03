@@ -37,6 +37,7 @@ This project builds a scalable, end-to-end data pipeline leveraging AWS cloud se
 - `process_batch_data.ipynb` Obtains data from the AWS S3 bucket, cleans it, and writes it to the Delta table. This is the Databricks notebook that is run by `9105411ea84a_dag.py` daily.
 - `process_stream_data.ipynb` Obtains the stream data from AWS Kinesis, cleans it, and writes it to the Delta table.
 - `query_batch_data.ipynb` Contains SQL queries performed on cleaned batch data.
+- `arch.png` An image of the diagram of the architecture.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -44,14 +45,14 @@ This project builds a scalable, end-to-end data pipeline leveraging AWS cloud se
 - `RDS` Stores Pinterest data. Source of data for the emulation script. 
 - `Data emulation` Python script feeds API Gateway with data. 
 - `API Gateway` Provides an API for data transfer. Batch data to Kafka and stream data to Kinesis DS.
-- `Kafka` Ingests and processes data (installed on a EC2 instance).
+- `Kafka` Ingests and processes data.
 - `Kinesis DS` Manages streams of incoming real-time data from the API.
 - `S3` S3 buckets store Kafka topic data and a DAG files.
 - `MWAA` MWAA environment schedules Airflow workflows for Databricks environments.
 - `Databricks` Platform for processing and transforming batch and stream data.
 - `Spark` is used to clean and analyze data within Databricks.
 
-<img src="https://lucid.app/lucidchart/e6191854-6dac-4afb-b2f0-2a1f18b5fdc5/edit?invitationId=inv_f3234bf9-8e8c-4581-836e-3fa1935ec43b&page=0_0#" alt="Alt Text" width="300">
+<img src="https://github.com/Janis-Gulbis/pinterest-data-pipeline315/blob/main/arch.png#" alt="diagram of the architecture" width="1000">
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
