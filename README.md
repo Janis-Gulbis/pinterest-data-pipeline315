@@ -17,7 +17,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About the Project
 
-### Summary
+### Introduction
 Pinterest is a visual discovery platform that helps users find ideas and inspiration. With billions of data points generated daily through views, follows, and uploads, Pinterest continuously analyzes user interactions to deliver more relevant content.
 
 This project builds a scalable, end-to-end data pipeline leveraging AWS cloud services and Databricks to process and analyze real-time and historical Pinterest-emulated data. The pipeline is designed to handle batch and streaming data ingestion, transformation, and analysis, enabling deeper insights into user engagement patterns.
@@ -28,8 +28,20 @@ This project builds a scalable, end-to-end data pipeline leveraging AWS cloud se
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+### Project Aim
+This project applies AWS, Kafka, Spark, Airflow, and Databricks to build an end-to-end data pipeline. It demonstrates key concepts in real-time data streaming, ETL processing, and workflow orchestration using Python, PySpark, and SQL.
 
-### Files & File Content
+As part of the implementation:
+
+- AWS: Configured a Kafka client and created Kafka topics on an EC2 instance, set up an API Gateway, and worked within Managed Workflows for Apache Airflow (MWAA) and Kinesis Data Streams.
+- Databricks: Used the platform for data extraction, transformation, and loading (ETL) to process and analyze data efficiently.
+- Airflow: Designed and deployed a DAG to schedule a Databricks Notebook, ensuring automation and monitoring of tasks.
+  
+This project showcases hands-on experience with cloud-based data engineering tools, reinforcing best practices in scalability, automation, and real-time data processing.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Files & File Content
 - `user_posting_emulation.py` The script emulates the stream of POST requests by users on Pinterest. Data is formatted and sent via API Invoke URL to Kafka topics in batches of 500 records per execution.
 - `user_posting_emulation_streaming.py` This script emulates a continuous stream of POST requests by users on Pinterest. Sends requests to the API, adding one record at a time to the stream, and utilizes PartitionKey to identify what table record belongs to.
 - `9105411ea84a_dag.py` An Airflow DAG that triggers a Databricks Notebook daily.
@@ -41,7 +53,7 @@ This project builds a scalable, end-to-end data pipeline leveraging AWS cloud se
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-### High-level Architecture
+## High-level Architecture
 
 <img src="https://github.com/Janis-Gulbis/pinterest-data-pipeline315/blob/main/arch.png#" alt="diagram of the architecture" width="1000">
 
