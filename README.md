@@ -54,12 +54,12 @@ This project showcases hands-on experience with cloud-based data engineering too
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## High-level Architecture
-
+<!-- DATABASE SCHEMA -->
 <img src="https://github.com/Janis-Gulbis/pinterest-data-pipeline315/blob/main/arch.png#" alt="diagram of the architecture" width="1000">
 
 - `RDS` Stores Pinterest data. Source of data for the emulation script. 
 - `Data emulation` Python script feeds API Gateway with data. 
-- `API Gateway` Provides an API for data transfer. Batch data to Kafka and stream data to Kinesis DS.
+- `API Gateway` provides an API for data transfer. Batch data will be sent to Kafka and streamed to Kinesis DS.
 - `Kafka` Ingests and processes data.
 - `Kinesis DS` Manages streams of incoming real-time data from the API.
 - `S3` S3 buckets store Kafka topic data and a DAG files.
@@ -70,4 +70,80 @@ This project showcases hands-on experience with cloud-based data engineering too
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- DATABASE SCHEMA -->
+
+## Project Workflow
+
+### Initial exploration
+
+I modified the supplied `user_posting_emulation.py` to hide the AWS RDS log-in details and wrote the output to a file. I forced the JSON to output information in strings only, as datetime was also used in two of the three tables.
+
+These are:
+- `pinterest_data` - data about user posts on Pinterest
+
+```python
+{
+  "index": 7528,
+  "unique_id": "fbe53c66-3442-4773-b19e-d3ec6f54dddf",
+  "title": "No Title Data Available",
+  "description": "No description available Story format",
+  "poster_name": "User Info Error",
+  "follower_count": "User Info Error",
+  "tag_list": "N,o, ,T,a,g,s, ,A,v,a,i,l,a,b,l,e",
+  "is_image_or_video": "multi-video(story page format)",
+  "image_src": "Image src error.",
+  "downloaded": 0,
+  "save_location": "Local save in /data/mens-fashion",
+  "category": "mens-fashion",
+}
+```
+- `geolocation_data` - data about the geographical location of the post
+
+```python
+{
+  "ind": 7528,
+  "timestamp": "2020-08-28 03:52:47",
+  "latitude": -89.9787,
+  "longitude": -173.293,
+  "country": "Albania",
+}
+```
+- `user_data` - data about user who posted
+
+```python
+{
+  "ind": 7528,
+  "first_name": "Abigail",
+  "last_name": "Ali",
+  "age": 20,
+  "date_joined": "2015-10-24 11:23:51",
+}
+```
+* Note the inconsistencies with the index/ind column header
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### AWS
+
+An AWS IAM role had been created for me. I used the supplied username and password to log into AWS. A pem key file had been created to allow us to connect to an existing EC2 instance.
+
+### Kafka
+
+The EC2 instance had Kafa pre-installed on it. The next step was to create three Kafka topics - one for each data table:
+
+```python
+- 9105411ea84a.geo
+- 9105411ea84a.pin
+- 9105411ea84a.user
+```
+### API Gateway - Batch Processing
+
+Next up is configuring an API within the API Gateway console. I created a /{proxy+} and added an HTTP method. PublicDNS from our ec2 instance was the Endpoint URL. I then deployed the API and stored the Invoke URL for later use in my script. The endpoint will be the main point of communication with the Kafka rest proxy. `http://KafkaClientEC2InstancePublicDNS:8082/{proxy}`
+
+
+
+
+
+
+
+
+
