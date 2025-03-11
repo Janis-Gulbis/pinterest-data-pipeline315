@@ -139,9 +139,24 @@ The EC2 instance had Kafa pre-installed on it. The next step was to create three
 
 Next up is configuring an API within the API Gateway console. I created a /{proxy+} and added an HTTP method. PublicDNS from our ec2 instance was the Endpoint URL. I then deployed the API and stored the Invoke URL for later use in my script. The endpoint will be the main point of communication with the Kafka rest proxy. `http://KafkaClientEC2InstancePublicDNS:8082/{proxy}`
 
+#### Sending Data to the API using Python
+I modified the supplied user_posting_emulation.py script to send data to the newly created API. The basis of communicating with the REST proxy is the following:
 
+```python
+invoke_url = "https://YourAPIInvokeURL/YourDeploymentStage/topics/YourTopicName"
+#To send JSON messages, you need to follow this structure
+payload = json.dumps({
+    "records": [
+        {
+        #Data should be send as pairs of column_name:value, with different columns separated by commas
+        "value": {"index": df["index"], "name": df["name"], "age": df["age"], "role": df["role"]}
+        }
+    ]
+})
 
-
+headers = {'Content-Type': 'application/vnd.kafka.json.v2+json'}
+response = requests.request("POST", invoke_url, headers=headers, data=payload)
+```
 
 
 
