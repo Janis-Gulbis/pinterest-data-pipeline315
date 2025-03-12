@@ -137,7 +137,7 @@ The EC2 instance had Kafa pre-installed on it. The next step was to create three
 ```
 ### API Gateway - Batch Processing
 
-Next up is configuring an API within the API Gateway console. I created a /{proxy+} and added an HTTP method. PublicDNS from our ec2 instance was the Endpoint URL. I then deployed the API and stored the Invoke URL for later use in my script. The endpoint will be the main point of communication with the Kafka rest proxy. `http://KafkaClientEC2InstancePublicDNS:8082/{proxy}`
+Next up is configuring an API within the API Gateway console. I created a /{proxy+} resource and added an HTTP method. PublicDNS from our ec2 instance was the Endpoint URL. I then deployed the API and stored the Invoke URL for later use in my script. The endpoint will be the main point of communication with the Kafka rest proxy. `http://KafkaClientEC2InstancePublicDNS:8082/{proxy}`
 
 #### Sending Data to the API using Python
 I modified the supplied user_posting_emulation.py script to send data to the newly created API. The basis of communicating with the REST proxy is the following:
@@ -157,6 +157,33 @@ payload = json.dumps({
 headers = {'Content-Type': 'application/vnd.kafka.json.v2+json'}
 response = requests.request("POST", invoke_url, headers=headers, data=payload)
 ```
+I encountered difficulties converting the payload data to the required standard, namely converting `datetime` objects, which JSON does not handle natively. Eventually, I dealt with it by including these parameters within my `send_to_kafka` function
+
+```python
+# Convert datetime objects to strings in the data
+    for key, value in data.items():
+        if isinstance(value, datetime):
+            data[key] = value.strftime("%Y-%m-%d %H:%M:%S")
+```
+Eventually, data was successfully streamed from the DB and sent to Kafka (with an imposed limit of 500 rows per table), which was then stored in an S3 bucket
+
+```Python
+topics/<your_UserId>.pin/partition=0/
+topics/<your_UserId>.geo/partition=0/
+topics/<your_UserId>.user/partition=0/
+```
+
+### Batch Processing Data with Databricks
+
+#### Spark on Databricks
+
+Data was red from S3 into Databricks, and using Spark SQL, I cleaned the data of each of the three tables I had loaded: `pin`, `geo`, and `user`. Cleaning involved ensuring columns had correct data types and eliminating invalid values. Also, several columns were merged - namely, the `longitude` and `latitude` columns became the `coordinates` column (`geo` table), and the `first_name` and `last_name` columns were combined to form a new column named `user_name`. 
+
+A series of queries were performed to answer a meriad of questions. The full list of questions and the code can be found [here](https://github.com/Janis-Gulbis/pinterest-data-pipeline315/blob/main/Databricks/query_batch_data.ipynb)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
 
 
 
