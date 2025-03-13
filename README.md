@@ -165,7 +165,7 @@ I encountered difficulties converting the payload data to the required standard,
         if isinstance(value, datetime):
             data[key] = value.strftime("%Y-%m-%d %H:%M:%S")
 ```
-Eventually, data was successfully streamed from the DB and sent to Kafka (with an imposed limit of 500 rows per table), which was then stored in an S3 bucket
+Data was then successfully streamed from the DB and sent to Kafka (with an imposed limit of 500 rows per table), which was then stored in an S3 bucket
 
 ```Python
 topics/<your_UserId>.pin/partition=0/
@@ -179,13 +179,11 @@ topics/<your_UserId>.user/partition=0/
 
 Data was red from S3 into Databricks, and using Spark SQL, I cleaned the data of each of the three tables I had loaded: `pin`, `geo`, and `user`. Cleaning involved ensuring columns had correct data types and eliminating invalid values. Also, several columns were merged - namely, the `longitude` and `latitude` columns became the `coordinates` column (`geo` table), and the `first_name` and `last_name` columns were combined to form a new column named `user_name`. 
 
-A series of queries were performed to answer a meriad of questions. The full list of questions and the code can be found [here](https://github.com/Janis-Gulbis/pinterest-data-pipeline315/blob/main/Databricks/query_batch_data.ipynb)
+A series of queries were performed to answer a meriad of questions. The complete list of questions and the code can be found [here](https://github.com/Janis-Gulbis/pinterest-data-pipeline315/blob/main/Databricks/query_batch_data.ipynb)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+#### AWS AMAA
+The next task was to create an Airflow DAG that would trigger a Spark Databricks notebook. The file [9105411ea84a_dag.py](https://github.com/Janis-Gulbis/pinterest-data-pipeline315/blob/main/9105411ea84a_dag.py) was then uploaded to a dedicated S3 bucket within the AWS MAA environment. Spark Databricks notebook [process_batch_data.ipynb](https://github.com/Janis-Gulbis/pinterest-data-pipeline315/blob/main/Databricks/process_batch_data.ipynb)is responsible for ingesting raw batch data from the S3 buckets, cleaning it, and loading it to the Delta tables.
 
-
-
-
-
+The DAG was manually triggered on the MWAA Airflow UI and scheduled to run daily. The DAG was monitored and ran successfully for 10 days until I manually paused it.  
 
 
