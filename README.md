@@ -135,7 +135,7 @@ The EC2 instance had Kafa pre-installed on it. The next step was to create three
 - 9105411ea84a.pin
 - 9105411ea84a.user
 ```
-### API Gateway - Batch Processing
+### Batch Processing: API Gateway
 
 Next up is configuring an API within the API Gateway console. I created a /{proxy+} resource and added an HTTP method. PublicDNS from our ec2 instance was the Endpoint URL. I then deployed the API and stored the Invoke URL for later use in my script. The endpoint will be the main point of communication with the Kafka rest proxy. `http://KafkaClientEC2InstancePublicDNS:8082/{proxy}`
 
@@ -173,7 +173,7 @@ topics/<your_UserId>.geo/partition=0/
 topics/<your_UserId>.user/partition=0/
 ```
 
-### Batch Processing Data with Databricks
+### Batch Processing: Databricks
 
 #### Spark on Databricks
 
@@ -185,5 +185,37 @@ A series of queries were performed to answer a meriad of questions. The complete
 The next task was to create an Airflow DAG that would trigger a Spark Databricks notebook. The file [9105411ea84a_dag.py](https://github.com/Janis-Gulbis/pinterest-data-pipeline315/blob/main/9105411ea84a_dag.py) was then uploaded to a dedicated S3 bucket within the AWS MAA environment. Spark Databricks notebook [process_batch_data.ipynb](https://github.com/Janis-Gulbis/pinterest-data-pipeline315/blob/main/Databricks/process_batch_data.ipynb)is responsible for ingesting raw batch data from the S3 buckets, cleaning it, and loading it to the Delta tables.
 
 The DAG was manually triggered on the MWAA Airflow UI and scheduled to run daily. The DAG was monitored and ran successfully for 10 days until I manually paused it.  
+
+### Stream Processing: AWS Kinesis & API Gateway
+
+AWS Kinesis has an existing stream, `Kinesis-Prod-Stream`, where data will be sent. To uniquely identify our data, I will later use the following partition keys: 
+```Python
+9105411ea84a_pin
+9105411ea84a_geo
+9105411ea84a_user
+```
+I configured the previously created REST API to invoke Kinesis actions. My AWS Gateway API now had the following structure: 
+```Python
+
+    /
+        /streams
+        GET
+            /{stream-name}
+            DELETE
+            POST
+            GET
+                /record
+                PUT
+                /recors
+                PUT
+```
+
+
+
+
+
+
+
+
 
 
